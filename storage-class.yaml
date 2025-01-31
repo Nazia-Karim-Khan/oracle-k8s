@@ -1,0 +1,8 @@
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: oci-bv
+  annotations:
+    openebs.io/cas-type: local
+provisioner: openebs.io/local
+volumeBindingMode: WaitForFirstConsumer
