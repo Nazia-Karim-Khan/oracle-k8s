@@ -1,0 +1,22 @@
+Install cert-manager:
+kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.14.4/cert-manager.yaml
+
+kubectl apply -f rbac/cluster-role-binding.yaml
+
+kubectl apply -f oracle-database-operator.yaml
+
+kubectl apply -f rbac/node-rbac.yaml
+
+kubectl apply -f sidb.yaml 
+
+kubectl create secret generic db-admin-secret --from-literal=oracle_pwd=db-admin -n oracle-sidb
+
+e+_wjIoet#i83kA4mF9
+
+
+kubectl create secret docker-registry oracle-container-registry-secret --docker-server=container-registry.oracle.com --docker-username='NAZIA.KARIM@BRAINSTATION-23.COM' --docker-password='e+_wjIoet#i83kA4mF9' --docker-email='nazia.karim@brainstation-23.com'
+
+kubectl apply -f singleinstancedatabase_create.yaml
+
+
+kubectl get singleinstancedatabase sidb-sample -o "jsonpath={.status.status}" -n oracle-sidb 
