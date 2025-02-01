@@ -1,8 +1,3 @@
-#
-# Copyright (c) 2023, Oracle and/or its affiliates.
-# Licensed under the Universal Permissive License v 1.0 as shown at http://oss.oracle.com/licenses/upl.
-#
-
 apiVersion: database.oracle.com/v1alpha1
 kind: SingleInstanceDatabase
 metadata:
@@ -47,3 +42,8 @@ spec:
 
   ## Count of Database Pods.
   replicas: 1
+  # resources:
+  #   requests:
+  #     memory: "4Gi"  # Ensuring at least 4GB memory is available
+  #   limits:
+  #     memory: "6Gi" 

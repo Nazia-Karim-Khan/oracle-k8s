@@ -9,7 +9,7 @@ kubectl apply -f rbac/node-rbac.yaml
 
 kubectl apply -f sidb.yaml 
 
-kubectl create secret generic db-admin-secret --from-literal=oracle_pwd=db-admin -n oracle-sidb
+kubectl create secret generic db-admin-secret --from-literal=oracle_pwd=MyameisNazia1# -n oracle-sidb
 
 e+_wjIoet#i83kA4mF9
 
@@ -20,3 +20,8 @@ kubectl apply -f singleinstancedatabase_create.yaml
 
 
 kubectl get singleinstancedatabase sidb-sample -o "jsonpath={.status.status}" -n oracle-sidb 
+
+https://www.geeksforgeeks.org/how-to-install-sqlplus-on-linux/
+
+
+sqlplus sys/MyameisNazia1#@10.0.25.54:1521/ORCL as sysdba
