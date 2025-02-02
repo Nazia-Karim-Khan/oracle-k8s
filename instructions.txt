@@ -62,3 +62,6 @@ kubectl patch pv pvc-a4ac2535-3782-4968-81a3-1a98407c12c6 -p '{"spec":{"persiste
 
 Clone a Database: 
 kubectl apply -f singleinstancedatabase_clone.yaml
+
+
+Ref: https://github.com/oracle/oracle-database-operator, https://github.com/oracle/oracle-database-operator/blob/main/docs/sidb/README.md#singleinstancedatabase-resource
