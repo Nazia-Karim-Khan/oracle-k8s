@@ -7,21 +7,24 @@ kubectl apply -f oracle-database-operator.yaml
 
 kubectl apply -f rbac/node-rbac.yaml
 
-kubectl apply -f sidb.yaml 
-
+Generate Secret:
 kubectl create secret generic db-admin-secret --from-literal=oracle_pwd=MyameisNazia1# -n oracle-sidb
 
-e+_wjIoet#i83kA4mF9
+Log into Oracle Container Registry and accept the license agreement for the Database image; then generate auth token:
+kubectl create secret docker-registry oracle-container-registry-secret --docker-server=container-registry.oracle.com --docker-username='nazia.karim@brainstation-23.com' --docker-password='e+_wjIoet#i83kA4mF9' --docker-email='nazia.karim@brainstation-23.com' -n oracle-sidb
 
+Create storage class:
+kubectl apply -f storage-class.yaml 
 
-kubectl create secret docker-registry oracle-container-registry-secret --docker-server=container-registry.oracle.com --docker-username='NAZIA.KARIM@BRAINSTATION-23.COM' --docker-password='e+_wjIoet#i83kA4mF9' --docker-email='nazia.karim@brainstation-23.com'
-
+Create single instance database:
 kubectl apply -f singleinstancedatabase_create.yaml
 
-
+Chech status:
 kubectl get singleinstancedatabase sidb-sample -o "jsonpath={.status.status}" -n oracle-sidb 
 
+Install sqlplus:
 https://www.geeksforgeeks.org/how-to-install-sqlplus-on-linux/
 
-
-sqlplus sys/MyameisNazia1#@10.10.3.4:30856/ORCL1 as sysdba
+Connect to database:
+kubectl get singleinstancedatabase sidb-sample -o "jsonpath={.status.connectString}" -n oracle-sidb
+sqlplus sys/MyameisNazia1#@<connection_string>>/ORCL1 as sysdba
