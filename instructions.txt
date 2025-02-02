@@ -28,3 +28,37 @@ https://www.geeksforgeeks.org/how-to-install-sqlplus-on-linux/
 Connect to database:
 kubectl get singleinstancedatabase sidb-sample -o "jsonpath={.status.connectString}" -n oracle-sidb
 sqlplus sys/MyameisNazia1#@<connection_string>>/ORCL1 as sysdba
+
+CREATE TABLE employees (
+    emp_id NUMBER PRIMARY KEY,
+    emp_name VARCHAR2(100),
+    emp_salary NUMBER(10, 2),
+    hire_date DATE
+);
+
+INSERT INTO employees (emp_id, emp_name, emp_salary, hire_date) 
+VALUES (1, 'John Doe', 55000, TO_DATE('2020-06-15', 'YYYY-MM-DD'));
+
+INSERT INTO employees (emp_id, emp_name, emp_salary, hire_date) 
+VALUES (2, 'Jane Smith', 60000, TO_DATE('2019-05-10', 'YYYY-MM-DD'));
+
+INSERT INTO employees (emp_id, emp_name, emp_salary, hire_date) 
+VALUES (3, 'Alice Johnson', 52000, TO_DATE('2021-08-25', 'YYYY-MM-DD'));
+
+INSERT INTO employees (emp_id, emp_name, emp_salary, hire_date) 
+VALUES (4, 'Bob Brown', 58000, TO_DATE('2018-11-05', 'YYYY-MM-DD'));
+
+INSERT INTO employees (emp_id, emp_name, emp_salary, hire_date) 
+VALUES (5, 'Charlie Davis', 62000, TO_DATE('2022-03-12', 'YYYY-MM-DD'));
+
+SELECT * FROM employees;
+
+commit
+
+
+Update Reclaim Policy:
+kubectl patch pv pvc-a4ac2535-3782-4968-81a3-1a98407c12c6 -p '{"spec":{"persistentVolumeReclaimPolicy":"Retain"}}'
+
+
+Clone a Database: 
+kubectl apply -f singleinstancedatabase_clone.yaml
