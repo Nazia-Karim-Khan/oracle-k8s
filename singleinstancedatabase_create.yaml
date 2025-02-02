@@ -28,7 +28,7 @@ spec:
 
   ## Database image details
   image:
-    pullFrom: container-registry.oracle.com/database/enterprise:latest
+    pullFrom: container-registry.oracle.com/database/enterprise:19.3.0.0
     pullSecrets: oracle-container-registry-secret
 
   ## size is the required minimum size of the persistent volume
@@ -47,3 +47,15 @@ spec:
   #     memory: "4Gi"  # Ensuring at least 4GB memory is available
   #   limits:
   #     memory: "6Gi" 
+  ## ADD SECURITY CONTEXT HERE   
+  # podSpec:
+  #   securityContext:
+  #     runAsUser: 0  # Run as root (optional)
+  #     runAsNonRoot: false
+  #     privileged: true
+  #     capabilities:
+  #       add:
+  #         - SYS_ADMIN
+  #         - DAC_OVERRIDE
+  #     seccompProfile:
+  #       type: Unconfined

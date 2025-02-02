@@ -24,4 +24,4 @@ kubectl get singleinstancedatabase sidb-sample -o "jsonpath={.status.status}" -n
 https://www.geeksforgeeks.org/how-to-install-sqlplus-on-linux/
 
 
-sqlplus sys/MyameisNazia1#@10.0.25.54:1521/ORCL as sysdba
+sqlplus sys/MyameisNazia1#@10.10.3.4:30856/ORCL1 as sysdba

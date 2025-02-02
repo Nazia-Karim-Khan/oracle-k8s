@@ -6,3 +6,4 @@ metadata:
     openebs.io/cas-type: local
 provisioner: openebs.io/local
 volumeBindingMode: WaitForFirstConsumer
+allowVolumeExpansion: true
