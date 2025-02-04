@@ -65,3 +65,29 @@ kubectl apply -f singleinstancedatabase_clone.yaml
 
 
 Ref: https://github.com/oracle/oracle-database-operator, https://github.com/oracle/oracle-database-operator/blob/main/docs/sidb/README.md#singleinstancedatabase-resource
+
+
+mkdir -p /opt/oracle/backup/
+chmod 777 /opt/oracle/backup/
+rman target /
+
+BACKUP DATABASE PLUS ARCHIVELOG;
+
+BACKUP CURRENT CONTROLFILE FORMAT '/opt/oracle/backup/controlfile.bkp';
+
+ls -lh /opt/oracle/backup/ 
+
+kubectl cp sidb-sample-19hhb:/opt/oracle/backup ./local_backup -n oracle-sidb
+
+kubectl cp ./local_backup sidb-sample-zaouh:/opt/oracle/backup -n oracle-sidb
+
+SHUTDOWN IMMEDIATE;
+
+
+
+rman target /
+
+RESTORE CONTROLFILE FROM '/opt/oracle/backup/controlfile.bkp';
+ALTER DATABASE MOUNT;
+RESTORE DATABASE;
+RECOVER DATABASE;
