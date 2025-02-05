@@ -91,3 +91,691 @@ RESTORE CONTROLFILE FROM '/opt/oracle/backup/controlfile.bkp';
 ALTER DATABASE MOUNT;
 RESTORE DATABASE;
 RECOVER DATABASE;
+
+
+
+
+/////////////
+
+
+bash-4.2$ ls /opt/oracle/backup/
+033gurd1_1_1  043gurd3_1_1  053gurda_1_1
+bash-4.2$ ls /opt/oracle/backup/
+033gurd1_1_1  043gurd3_1_1  053gurda_1_1
+bash-4.2$ ls /opt/oracle/backup/
+033gurd1_1_1  043gurd3_1_1  053gurda_1_1  063gurde_1_1
+bash-4.2$ ls /opt/oracle/backup/
+033gurd1_1_1  043gurd3_1_1  053gurda_1_1  063gurde_1_1	073gure9_1_1  093gureg_1_1  0a3gurej_1_1
+bash-4.2$ ls /opt/oracle/backup/
+033gurd1_1_1  043gurd3_1_1  053gurda_1_1  063gurde_1_1	073gure9_1_1  093gureg_1_1  0a3gurej_1_1  0b3gurf3_1_1	0c3gurfi_1_1
+bash-4.2$ ls /opt/oracle/backup/
+033gurd1_1_1  043gurd3_1_1  053gurda_1_1  063gurde_1_1	073gure9_1_1  093gureg_1_1  0a3gurej_1_1  0b3gurf3_1_1	0c3gurfi_1_1  0d3gurfq_1_1  controlfile.bkp
+bash-4.2$ ls -lh /path/to/local_backup/
+ls: cannot access /path/to/local_backup/: No such file or directory
+bash-4.2$ ls -lh /opt/oracle/backup/   
+total 3.3G
+-rw-r--r--. 1 oracle oinstall  61M Feb  5 06:25 033gurd1_1_1
+-rw-r--r--. 1 oracle oinstall 5.5M Feb  5 06:25 043gurd3_1_1
+-rw-r--r--. 1 oracle oinstall 472M Feb  5 06:26 053gurda_1_1
+-rw-r--r--. 1 oracle oinstall 555M Feb  5 06:27 063gurde_1_1
+-rw-r--r--. 1 oracle oinstall  19K Feb  5 06:27 073gure9_1_1
+-rw-r--r--. 1 oracle oinstall  61M Feb  5 06:27 093gureg_1_1
+-rw-r--r--. 1 oracle oinstall 1.2G Feb  5 06:30 0a3gurej_1_1
+-rw-r--r--. 1 oracle oinstall 472M Feb  5 06:31 0b3gurf3_1_1
+-rw-r--r--. 1 oracle oinstall 555M Feb  5 06:32 0c3gurfi_1_1
+-rw-r--r--. 1 oracle oinstall 8.0K Feb  5 06:32 0d3gurfq_1_1
+-rw-r--r--. 1 oracle oinstall  18M Feb  5 06:32 controlfile.bkp
+bash-4.2$ sqlplus / as sysdba
+
+SQL*Plus: Release 19.0.0.0.0 - Production on Wed Feb 5 06:33:41 2025
+Version 19.3.0.0.0
+
+Copyright (c) 1982, 2019, Oracle.  All rights reserved.
+
+
+Connected to:
+Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+Version 19.3.0.0.0
+
+SQL> STARTUP NOMOUNT;
+ORA-01081: cannot start already-running ORACLE - shut it down first
+SQL> SELECT STATUS FROM V$INSTANCE;
+
+STATUS
+------------
+OPEN
+
+SQL> SHUTDOWN IMMEDIATE;
+
+Database closed.
+Database dismounted.
+ORACLE instance shut down.
+SQL> SQL> STARTUP NOMOUNT;
+ORACLE instance started.
+
+Total System Global Area 5150604464 bytes
+Fixed Size		    9145520 bytes
+Variable Size		  956301312 bytes
+Database Buffers	 4177526784 bytes
+Redo Buffers		    7630848 bytes
+SQL> exit;
+Disconnected from Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+Version 19.3.0.0.0
+bash-4.2$ rman target /
+
+Recovery Manager: Release 19.0.0.0.0 - Production on Wed Feb 5 06:35:17 2025
+Version 19.3.0.0.0
+
+Copyright (c) 1982, 2019, Oracle and/or its affiliates.  All rights reserved.
+
+connected to target database: ORCL1 (not mounted)
+
+RMAN> RESTORE CONTROLFILE FROM '/path/to/local_backup/controlfile.bkp';
+
+Starting restore at 05-FEB-25
+using target database control file instead of recovery catalog
+allocated channel: ORA_DISK_1
+channel ORA_DISK_1: SID=261 device type=DISK
+
+RMAN-00571: ===========================================================
+RMAN-00569: =============== ERROR MESSAGE STACK FOLLOWS ===============
+RMAN-00571: ===========================================================
+RMAN-03002: failure of restore command at 02/05/2025 06:35:25
+RMAN-06172: no AUTOBACKUP found or specified handle is not a valid copy or piece
+
+RMAN> RESTORE CONTROLFILE FROM '/opt/oracle/backup/controlfile.bkp';
+
+Starting restore at 05-FEB-25
+using channel ORA_DISK_1
+
+channel ORA_DISK_1: restoring control file
+channel ORA_DISK_1: restore complete, elapsed time: 00:00:01
+output file name=/opt/oracle/oradata/ORCL1/control01.ctl
+Finished restore at 05-FEB-25
+
+RMAN> ALTER DATABASE MOUNT;
+
+
+released channel: ORA_DISK_1
+Statement processed
+
+RMAN> 
+RMAN> CATALOG START WITH '/opt/oracle/backup/';
+
+Starting implicit crosscheck backup at 05-FEB-25
+allocated channel: ORA_DISK_1
+channel ORA_DISK_1: SID=13 device type=DISK
+Crosschecked 12 objects
+Finished implicit crosscheck backup at 05-FEB-25
+
+Starting implicit crosscheck copy at 05-FEB-25
+using channel ORA_DISK_1
+Finished implicit crosscheck copy at 05-FEB-25
+
+searching for all files in the recovery area
+cataloging files...
+cataloging done
+
+List of Cataloged Files
+=======================
+File Name: /opt/oracle/oradata/fast_recovery_area/ORCL1/archivelog/2025_02_05/o1_mf_1_7_mt60z616_.arc
+
+searching for all files that match the pattern /opt/oracle/backup/
+
+List of Files Unknown to the Database
+=====================================
+File Name: /opt/oracle/backup/controlfile.bkp
+
+Do you really want to catalog the above files (enter YES or NO)? yes
+cataloging files...
+cataloging done
+
+List of Cataloged Files
+=======================
+File Name: /opt/oracle/backup/controlfile.bkp
+
+RMAN> LIST BACKUP;
+
+
+List of Backup Sets
+===================
+
+
+BS Key  Size       Device Type Elapsed Time Completion Time
+------- ---------- ----------- ------------ ---------------
+1       60.54M     DISK        00:00:01     04-FEB-25      
+        BP Key: 1   Status: AVAILABLE  Compressed: NO  Tag: TAG20250204T125041
+        Piece Name: /opt/oracle/backup/033gurd1_1_1
+
+  List of Archived Logs in backup set 1
+  Thrd Seq     Low SCN    Low Time  Next SCN   Next Time
+  ---- ------- ---------- --------- ---------- ---------
+  1    7       2147383    04-FEB-25 2163829    04-FEB-25
+  1    8       2163829    04-FEB-25 2164119    04-FEB-25
+
+BS Key  Type LV Size       Device Type Elapsed Time Completion Time
+------- ---- -- ---------- ----------- ------------ ---------------
+2       Full    1.13G      DISK        00:00:06     04-FEB-25      
+        BP Key: 2   Status: AVAILABLE  Compressed: NO  Tag: TAG20250204T125043
+        Piece Name: /opt/oracle/backup/043gurd3_1_1
+  List of Datafiles in backup set 2
+  File LV Type Ckp SCN    Ckp Time  Abs Fuz SCN Sparse Name
+  ---- -- ---- ---------- --------- ----------- ------ ----
+  1       Full 2164138    04-FEB-25              NO    /opt/oracle/oradata/ORCL1/system01.dbf
+  3       Full 2164138    04-FEB-25              NO    /opt/oracle/oradata/ORCL1/sysaux01.dbf
+  4       Full 2164138    04-FEB-25              NO    /opt/oracle/oradata/ORCL1/undotbs01.dbf
+  7       Full 2164138    04-FEB-25              NO    /opt/oracle/oradata/ORCL1/users01.dbf
+
+BS Key  Type LV Size       Device Type Elapsed Time Completion Time
+------- ---- -- ---------- ----------- ------------ ---------------
+3       Full    471.75M    DISK        00:00:01     04-FEB-25      
+        BP Key: 3   Status: AVAILABLE  Compressed: NO  Tag: TAG20250204T125043
+        Piece Name: /opt/oracle/backup/053gurda_1_1
+  List of Datafiles in backup set 3
+  Container ID: 3, PDB Name: ORCLPDB1
+  File LV Type Ckp SCN    Ckp Time  Abs Fuz SCN Sparse Name
+  ---- -- ---- ---------- --------- ----------- ------ ----
+  9       Full 2164145    04-FEB-25              NO    /opt/oracle/oradata/ORCL1/ORCLPDB1/system01.dbf
+  10      Full 2164145    04-FEB-25              NO    /opt/oracle/oradata/ORCL1/ORCLPDB1/sysaux01.dbf
+  11      Full 2164145    04-FEB-25              NO    /opt/oracle/oradata/ORCL1/ORCLPDB1/undotbs01.dbf
+  12      Full 2164145    04-FEB-25              NO    /opt/oracle/oradata/ORCL1/ORCLPDB1/users01.dbf
+
+BS Key  Type LV Size       Device Type Elapsed Time Completion Time
+------- ---- -- ---------- ----------- ------------ ---------------
+4       Full    554.55M    DISK        00:00:09     04-FEB-25      
+        BP Key: 4   Status: AVAILABLE  Compressed: NO  Tag: TAG20250204T125043
+        Piece Name: /opt/oracle/backup/063gurde_1_1
+  List of Datafiles in backup set 4
+  Container ID: 2, PDB Name: PDB$SEED
+  File LV Type Ckp SCN    Ckp Time  Abs Fuz SCN Sparse Name
+  ---- -- ---- ---------- --------- ----------- ------ ----
+  5       Full 2156511    04-FEB-25              NO    /opt/oracle/oradata/ORCL1/pdbseed/system01.dbf
+  6       Full 2156511    04-FEB-25              NO    /opt/oracle/oradata/ORCL1/pdbseed/sysaux01.dbf
+  8       Full 2156511    04-FEB-25              NO    /opt/oracle/oradata/ORCL1/pdbseed/undotbs01.dbf
+
+BS Key  Size       Device Type Elapsed Time Completion Time
+------- ---------- ----------- ------------ ---------------
+5       18.00K     DISK        00:00:00     04-FEB-25      
+        BP Key: 5   Status: AVAILABLE  Compressed: NO  Tag: TAG20250204T125121
+        Piece Name: /opt/oracle/backup/073gure9_1_1
+
+  List of Archived Logs in backup set 5
+  Thrd Seq     Low SCN    Low Time  Next SCN   Next Time
+  ---- ------- ---------- --------- ---------- ---------
+  1    9       2164119    04-FEB-25 2164178    04-FEB-25
+
+BS Key  Size       Device Type Elapsed Time Completion Time
+------- ---------- ----------- ------------ ---------------
+7       60.56M     DISK        00:00:00     04-FEB-25      
+        BP Key: 7   Status: AVAILABLE  Compressed: NO  Tag: TAG20250204T125128
+        Piece Name: /opt/oracle/backup/093gureg_1_1
+
+  List of Archived Logs in backup set 7
+  Thrd Seq     Low SCN    Low Time  Next SCN   Next Time
+  ---- ------- ---------- --------- ---------- ---------
+  1    7       2147383    04-FEB-25 2163829    04-FEB-25
+  1    8       2163829    04-FEB-25 2164119    04-FEB-25
+  1    9       2164119    04-FEB-25 2164178    04-FEB-25
+  1    10      2164178    04-FEB-25 2164215    04-FEB-25
+
+BS Key  Type LV Size       Device Type Elapsed Time Completion Time
+------- ---- -- ---------- ----------- ------------ ---------------
+8       Full    1.13G      DISK        00:00:07     04-FEB-25      
+        BP Key: 8   Status: AVAILABLE  Compressed: NO  Tag: TAG20250204T125131
+        Piece Name: /opt/oracle/backup/0a3gurej_1_1
+  List of Datafiles in backup set 8
+  File LV Type Ckp SCN    Ckp Time  Abs Fuz SCN Sparse Name
+  ---- -- ---- ---------- --------- ----------- ------ ----
+  1       Full 2164228    04-FEB-25              NO    /opt/oracle/oradata/ORCL1/system01.dbf
+  3       Full 2164228    04-FEB-25              NO    /opt/oracle/oradata/ORCL1/sysaux01.dbf
+  4       Full 2164228    04-FEB-25              NO    /opt/oracle/oradata/ORCL1/undotbs01.dbf
+  7       Full 2164228    04-FEB-25              NO    /opt/oracle/oradata/ORCL1/users01.dbf
+
+BS Key  Type LV Size       Device Type Elapsed Time Completion Time
+------- ---- -- ---------- ----------- ------------ ---------------
+9       Full    471.75M    DISK        00:00:07     04-FEB-25      
+        BP Key: 9   Status: AVAILABLE  Compressed: NO  Tag: TAG20250204T125131
+        Piece Name: /opt/oracle/backup/0b3gurf3_1_1
+  List of Datafiles in backup set 9
+  Container ID: 3, PDB Name: ORCLPDB1
+  File LV Type Ckp SCN    Ckp Time  Abs Fuz SCN Sparse Name
+  ---- -- ---- ---------- --------- ----------- ------ ----
+  9       Full 2164241    04-FEB-25              NO    /opt/oracle/oradata/ORCL1/ORCLPDB1/system01.dbf
+  10      Full 2164241    04-FEB-25              NO    /opt/oracle/oradata/ORCL1/ORCLPDB1/sysaux01.dbf
+  11      Full 2164241    04-FEB-25              NO    /opt/oracle/oradata/ORCL1/ORCLPDB1/undotbs01.dbf
+  12      Full 2164241    04-FEB-25              NO    /opt/oracle/oradata/ORCL1/ORCLPDB1/users01.dbf
+
+BS Key  Type LV Size       Device Type Elapsed Time Completion Time
+------- ---- -- ---------- ----------- ------------ ---------------
+10      Full    554.55M    DISK        00:00:02     04-FEB-25      
+        BP Key: 10   Status: AVAILABLE  Compressed: NO  Tag: TAG20250204T125131
+        Piece Name: /opt/oracle/backup/0c3gurfi_1_1
+  List of Datafiles in backup set 10
+  Container ID: 2, PDB Name: PDB$SEED
+  File LV Type Ckp SCN    Ckp Time  Abs Fuz SCN Sparse Name
+  ---- -- ---- ---------- --------- ----------- ------ ----
+  5       Full 2156511    04-FEB-25              NO    /opt/oracle/oradata/ORCL1/pdbseed/system01.dbf
+  6       Full 2156511    04-FEB-25              NO    /opt/oracle/oradata/ORCL1/pdbseed/sysaux01.dbf
+  8       Full 2156511    04-FEB-25              NO    /opt/oracle/oradata/ORCL1/pdbseed/undotbs01.dbf
+
+BS Key  Size       Device Type Elapsed Time Completion Time
+------- ---------- ----------- ------------ ---------------
+11      7.50K      DISK        00:00:00     04-FEB-25      
+        BP Key: 11   Status: AVAILABLE  Compressed: NO  Tag: TAG20250204T125210
+        Piece Name: /opt/oracle/backup/0d3gurfq_1_1
+
+  List of Archived Logs in backup set 11
+  Thrd Seq     Low SCN    Low Time  Next SCN   Next Time
+  ---- ------- ---------- --------- ---------- ---------
+  1    11      2164215    04-FEB-25 2164260    04-FEB-25
+
+BS Key  Type LV Size       Device Type Elapsed Time Completion Time
+------- ---- -- ---------- ----------- ------------ ---------------
+13      Full    17.92M     DISK        00:00:01     04-FEB-25      
+        BP Key: 13   Status: AVAILABLE  Compressed: NO  Tag: TAG20250204T125408
+        Piece Name: /opt/oracle/backup/controlfile.bkp
+  Control File Included: Ckp SCN: 2164372      Ckp time: 04-FEB-25
+
+RMAN> RESTORE DATABASE;
+
+Starting restore at 05-FEB-25
+using channel ORA_DISK_1
+
+channel ORA_DISK_1: starting datafile backup set restore
+channel ORA_DISK_1: specifying datafile(s) to restore from backup set
+channel ORA_DISK_1: restoring datafile 00001 to /opt/oracle/oradata/ORCL1/system01.dbf
+channel ORA_DISK_1: restoring datafile 00003 to /opt/oracle/oradata/ORCL1/sysaux01.dbf
+channel ORA_DISK_1: restoring datafile 00004 to /opt/oracle/oradata/ORCL1/undotbs01.dbf
+channel ORA_DISK_1: restoring datafile 00007 to /opt/oracle/oradata/ORCL1/users01.dbf
+channel ORA_DISK_1: reading from backup piece /opt/oracle/backup/0a3gurej_1_1
+channel ORA_DISK_1: piece handle=/opt/oracle/backup/0a3gurej_1_1 tag=TAG20250204T125131
+channel ORA_DISK_1: restored backup piece 1
+channel ORA_DISK_1: restore complete, elapsed time: 00:00:07
+channel ORA_DISK_1: starting datafile backup set restore
+channel ORA_DISK_1: specifying datafile(s) to restore from backup set
+channel ORA_DISK_1: restoring datafile 00009 to /opt/oracle/oradata/ORCL1/ORCLPDB1/system01.dbf
+channel ORA_DISK_1: restoring datafile 00010 to /opt/oracle/oradata/ORCL1/ORCLPDB1/sysaux01.dbf
+channel ORA_DISK_1: restoring datafile 00011 to /opt/oracle/oradata/ORCL1/ORCLPDB1/undotbs01.dbf
+channel ORA_DISK_1: restoring datafile 00012 to /opt/oracle/oradata/ORCL1/ORCLPDB1/users01.dbf
+channel ORA_DISK_1: reading from backup piece /opt/oracle/backup/0b3gurf3_1_1
+channel ORA_DISK_1: piece handle=/opt/oracle/backup/0b3gurf3_1_1 tag=TAG20250204T125131
+channel ORA_DISK_1: restored backup piece 1
+channel ORA_DISK_1: restore complete, elapsed time: 00:00:07
+channel ORA_DISK_1: starting datafile backup set restore
+channel ORA_DISK_1: specifying datafile(s) to restore from backup set
+channel ORA_DISK_1: restoring datafile 00005 to /opt/oracle/oradata/ORCL1/pdbseed/system01.dbf
+channel ORA_DISK_1: restoring datafile 00006 to /opt/oracle/oradata/ORCL1/pdbseed/sysaux01.dbf
+channel ORA_DISK_1: restoring datafile 00008 to /opt/oracle/oradata/ORCL1/pdbseed/undotbs01.dbf
+channel ORA_DISK_1: reading from backup piece /opt/oracle/backup/0c3gurfi_1_1
+channel ORA_DISK_1: piece handle=/opt/oracle/backup/0c3gurfi_1_1 tag=TAG20250204T125131
+channel ORA_DISK_1: restored backup piece 1
+channel ORA_DISK_1: restore complete, elapsed time: 00:00:15
+Finished restore at 05-FEB-25
+
+RMAN> RECOVER DATABASE;
+
+Starting recover at 05-FEB-25
+using channel ORA_DISK_1
+RMAN-00571: ===========================================================
+RMAN-00569: =============== ERROR MESSAGE STACK FOLLOWS ===============
+RMAN-00571: ===========================================================
+RMAN-03002: failure of recover command at 02/05/2025 06:38:55
+ORA-19698: /opt/oracle/oradata/ORCL1/redo01.log is from different database: id=1576704555, db_name=ORCL1
+
+RMAN> exit
+
+
+Recovery Manager complete.
+bash-4.2$ sqlplus / as sysdba
+
+SQL*Plus: Release 19.0.0.0.0 - Production on Wed Feb 5 06:40:10 2025
+Version 19.3.0.0.0
+
+Copyright (c) 1982, 2019, Oracle.  All rights reserved.
+
+
+Connected to:
+Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+Version 19.3.0.0.0
+
+SQL> SELECT STATUS FROM V$INSTANCE;
+
+STATUS
+------------
+MOUNTED
+
+SQL> exit
+Disconnected from Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+Version 19.3.0.0.0
+bash-4.2$ rman target /
+
+Recovery Manager: Release 19.0.0.0.0 - Production on Wed Feb 5 06:40:26 2025
+Version 19.3.0.0.0
+
+Copyright (c) 1982, 2019, Oracle and/or its affiliates.  All rights reserved.
+
+connected to target database: ORCL1 (DBID=1576634961, not open)
+
+RMAN> ALTER DATABASE OPEN RESETLOGS;
+
+using target database control file instead of recovery catalog
+RMAN-00571: ===========================================================
+RMAN-00569: =============== ERROR MESSAGE STACK FOLLOWS ===============
+RMAN-00571: ===========================================================
+RMAN-03002: failure of sql statement command at 02/05/2025 06:40:29
+ORA-01152: file 1 was not restored from a sufficiently old backup 
+ORA-01110: data file 1: '/opt/oracle/oradata/ORCL1/system01.dbf'
+
+RMAN> RECOVER DATABASE;
+
+Starting recover at 05-FEB-25
+allocated channel: ORA_DISK_1
+channel ORA_DISK_1: SID=135 device type=DISK
+RMAN-00571: ===========================================================
+RMAN-00569: =============== ERROR MESSAGE STACK FOLLOWS ===============
+RMAN-00571: ===========================================================
+RMAN-03002: failure of recover command at 02/05/2025 06:41:29
+ORA-19698: /opt/oracle/oradata/ORCL1/redo01.log is from different database: id=1576704555, db_name=ORCL1
+
+RMAN> SHUTDOWN IMMEDIATE;
+STARTUP MOUNT;
+
+database dismounted
+Oracle instance shut down
+
+RMAN> 
+connected to target database (not started)
+Oracle instance started
+database mounted
+
+Total System Global Area    5150604464 bytes
+
+Fixed Size                     9145520 bytes
+Variable Size                956301312 bytes
+Database Buffers            4177526784 bytes
+Redo Buffers                   7630848 bytes
+
+RMAN> ALTER DATABASE CLEAR LOGFILE GROUP 1;
+ALTER DATABASE CLEAR LOGFILE GROUP 2;
+ALTER DATABASE CLEAR LOGFILE GROUP 3;
+
+Statement processed
+
+RMAN> 
+Statement processed
+
+RMAN> 
+Statement processed
+
+RMAN> RECOVER DATABASE UNTIL CANCEL;
+
+RMAN-00571: ===========================================================
+RMAN-00569: =============== ERROR MESSAGE STACK FOLLOWS ===============
+RMAN-00571: ===========================================================
+RMAN-00558: error encountered while parsing input commands
+RMAN-01009: syntax error: found "cancel": expecting one of: "available, scn, sequence, time"
+RMAN-01007: at line 1 column 24 file: standard input
+
+RMAN> RECOVER DATABASE UNTIL CANCEL USING BACKUP CONTROLFILE;
+
+RMAN-00571: ===========================================================
+RMAN-00569: =============== ERROR MESSAGE STACK FOLLOWS ===============
+RMAN-00571: ===========================================================
+RMAN-00558: error encountered while parsing input commands
+RMAN-01009: syntax error: found "cancel": expecting one of: "available, scn, sequence, time"
+RMAN-01007: at line 1 column 24 file: standard input
+
+RMAN> RECOVER DATABASE USING BACKUP CONTROLFILE;
+
+RMAN-00571: ===========================================================
+RMAN-00569: =============== ERROR MESSAGE STACK FOLLOWS ===============
+RMAN-00571: ===========================================================
+RMAN-00558: error encountered while parsing input commands
+RMAN-01009: syntax error: found "backup": expecting one of: "backupset, compressed, double-quoted-string, single-quoted-string"
+RMAN-01007: at line 1 column 24 file: standard input
+
+RMAN> RESTORE DATABASE;
+
+Starting restore at 05-FEB-25
+allocated channel: ORA_DISK_1
+channel ORA_DISK_1: SID=137 device type=DISK
+
+skipping datafile 1; already restored to file /opt/oracle/oradata/ORCL1/system01.dbf
+skipping datafile 3; already restored to file /opt/oracle/oradata/ORCL1/sysaux01.dbf
+skipping datafile 4; already restored to file /opt/oracle/oradata/ORCL1/undotbs01.dbf
+skipping datafile 7; already restored to file /opt/oracle/oradata/ORCL1/users01.dbf
+skipping datafile 5; already restored to file /opt/oracle/oradata/ORCL1/pdbseed/system01.dbf
+skipping datafile 6; already restored to file /opt/oracle/oradata/ORCL1/pdbseed/sysaux01.dbf
+skipping datafile 8; already restored to file /opt/oracle/oradata/ORCL1/pdbseed/undotbs01.dbf
+skipping datafile 9; already restored to file /opt/oracle/oradata/ORCL1/ORCLPDB1/system01.dbf
+skipping datafile 10; already restored to file /opt/oracle/oradata/ORCL1/ORCLPDB1/sysaux01.dbf
+skipping datafile 11; already restored to file /opt/oracle/oradata/ORCL1/ORCLPDB1/undotbs01.dbf
+skipping datafile 12; already restored to file /opt/oracle/oradata/ORCL1/ORCLPDB1/users01.dbf
+restore not done; all files read only, offline, excluded, or already restored
+Finished restore at 05-FEB-25
+
+RMAN> SHUTDOWN IMMEDIATE;
+STARTUP MOUNT;
+
+database dismounted
+Oracle instance shut down
+
+RMAN> 
+connected to target database (not started)
+Oracle instance started
+database mounted
+
+Total System Global Area    5150604464 bytes
+
+Fixed Size                     9145520 bytes
+Variable Size                956301312 bytes
+Database Buffers            4177526784 bytes
+Redo Buffers                   7630848 bytes
+
+RMAN> RECOVER DATABASE UNTIL CANCEL;
+
+RMAN-00571: ===========================================================
+RMAN-00569: =============== ERROR MESSAGE STACK FOLLOWS ===============
+RMAN-00571: ===========================================================
+RMAN-00558: error encountered while parsing input commands
+RMAN-01009: syntax error: found "cancel": expecting one of: "available, scn, sequence, time"
+RMAN-01007: at line 1 column 24 file: standard input
+
+RMAN> RECOVER DATABASE;
+
+Starting recover at 05-FEB-25
+allocated channel: ORA_DISK_1
+channel ORA_DISK_1: SID=2 device type=DISK
+
+starting media recovery
+
+archived log for thread 1 with sequence 0 is already on disk as file /opt/oracle/oradata/ORCL1/redo02.log
+channel ORA_DISK_1: starting archived log restore to default destination
+channel ORA_DISK_1: restoring archived log
+archived log thread=1 sequence=11
+channel ORA_DISK_1: reading from backup piece /opt/oracle/backup/0d3gurfq_1_1
+channel ORA_DISK_1: piece handle=/opt/oracle/backup/0d3gurfq_1_1 tag=TAG20250204T125210
+channel ORA_DISK_1: restored backup piece 1
+channel ORA_DISK_1: restore complete, elapsed time: 00:00:01
+archived log file name=/opt/oracle/oradata/fast_recovery_area/ORCL1/archivelog/2025_02_05/o1_mf_1_11_mt629xns_.arc thread=1 sequence=11
+channel default: deleting archived log(s)
+archived log file name=/opt/oracle/oradata/fast_recovery_area/ORCL1/archivelog/2025_02_05/o1_mf_1_11_mt629xns_.arc RECID=9 STAMP=1192257981
+unable to find archived log
+archived log thread=1 sequence=12
+RMAN-00571: ===========================================================
+RMAN-00569: =============== ERROR MESSAGE STACK FOLLOWS ===============
+RMAN-00571: ===========================================================
+RMAN-03002: failure of recover command at 02/05/2025 06:46:23
+RMAN-06054: media recovery requesting unknown archived log for thread 1 with sequence 12 and starting SCN of 2164260
+
+RMAN> RECOVER DATABASE UNTIL SEQUENCE 11;
+
+Starting recover at 05-FEB-25
+using channel ORA_DISK_1
+RMAN-00571: ===========================================================
+RMAN-00569: =============== ERROR MESSAGE STACK FOLLOWS ===============
+RMAN-00571: ===========================================================
+RMAN-03002: failure of recover command at 02/05/2025 06:47:08
+RMAN-06556: datafile 1 must be restored from backup older than SCN 2164215
+
+RMAN> exit
+
+
+Recovery Manager complete.
+bash-4.2$ sqlplus / as sysdba
+
+SQL*Plus: Release 19.0.0.0.0 - Production on Wed Feb 5 06:47:20 2025
+Version 19.3.0.0.0
+
+Copyright (c) 1982, 2019, Oracle.  All rights reserved.
+
+
+Connected to:
+Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+Version 19.3.0.0.0
+
+SQL> SELECT sequence#, name FROM v$archived_log ORDER BY sequence#;
+
+ SEQUENCE#
+----------
+NAME
+--------------------------------------------------------------------------------
+	 0
+/opt/oracle/oradata/ORCL1/redo03.log
+
+	 0
+/opt/oracle/oradata/ORCL1/redo01.log
+
+	 0
+/opt/oracle/oradata/ORCL1/redo02.log
+
+
+ SEQUENCE#
+----------
+NAME
+--------------------------------------------------------------------------------
+	 7
+
+
+	 8
+
+
+	 9
+
+
+
+ SEQUENCE#
+----------
+NAME
+--------------------------------------------------------------------------------
+	10
+
+
+	11
+
+
+	11
+
+
+
+9 rows selected.
+
+SQL> RECOVER DATABASE UNTIL SCN 2164260;
+ORA-00277: illegal option to the UNTIL recovery flag SCN
+
+
+SQL> exit
+Disconnected from Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+Version 19.3.0.0.0
+bash-4.2$ rman target /sdba
+
+Recovery Manager: Release 19.0.0.0.0 - Production on Wed Feb 5 06:48:05 2025
+Version 19.3.0.0.0
+
+Copyright (c) 1982, 2019, Oracle and/or its affiliates.  All rights reserved.
+
+connected to target database: ORCL1 (DBID=1576634961, not open)
+
+RMAN> RECOVER DATABASE UNTIL SCN 2164260;
+
+Starting recover at 05-FEB-25
+using target database control file instead of recovery catalog
+allocated channel: ORA_DISK_1
+channel ORA_DISK_1: SID=135 device type=DISK
+
+starting media recovery
+media recovery complete, elapsed time: 00:00:00
+
+Finished recover at 05-FEB-25
+
+RMAN> ALTER DATABASE OPEN RESETLOGS;
+
+Statement processed
+
+RMAN> SELECT status FROM v$instance;
+
+STATUS      
+------------
+OPEN        
+
+RMAN> exit
+
+
+Recovery Manager complete.
+bash-4.2$ sqlplus / as sysdba
+
+SQL*Plus: Release 19.0.0.0.0 - Production on Wed Feb 5 06:48:52 2025
+Version 19.3.0.0.0
+
+Copyright (c) 1982, 2019, Oracle.  All rights reserved.
+
+
+Connected to:
+Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+Version 19.3.0.0.0
+
+SQL> select * from employees;
+
+    EMP_ID
+----------
+EMP_NAME
+--------------------------------------------------------------------------------
+EMP_SALARY HIRE_DATE
+---------- ---------
+	 1
+John Doe
+     55000 15-JUN-20
+
+	 2
+Jane Smith
+     60000 10-MAY-19
+
+    EMP_ID
+----------
+EMP_NAME
+--------------------------------------------------------------------------------
+EMP_SALARY HIRE_DATE
+---------- ---------
+
+	 3
+Alice Johnson
+     52000 25-AUG-21
+
+	 4
+Bob Brown
+
+    EMP_ID
+----------
+EMP_NAME
+--------------------------------------------------------------------------------
+EMP_SALARY HIRE_DATE
+---------- ---------
+     58000 05-NOV-18
+
+	 5
+Charlie Davis
+     62000 12-MAR-22
+
+
+SQL> 
+
